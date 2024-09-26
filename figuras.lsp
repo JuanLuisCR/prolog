@@ -31,3 +31,5 @@
     (setq area(* base altura))
     (format t "El area del rectángulo es: ~a~%" area)
 )
+
+(defun )
