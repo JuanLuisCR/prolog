@@ -1,0 +1,13 @@
+1. Existe una persona en la feria tal que si dicha persona paga, entonces todas las personas pagan.
+∃x (Persona(x) ^ Paga(x) -> ∀y (Persona(y) Paga(x,y)))
+2. Socrates es un hombre, los hombres son mortales. Luego, Socrates es mortal.
+3. Hay estudiantes inteligentes, y hay estudiantes trabajadores. Por tanto, hay estudiantes inteligentes y trabajadores.
+4. En cierto país oriental se ha celebrado la fase final del campeonato mundial de fútbol. Cierto diario deportivo ha publicado
+las siguientes estadisticas de tan magno acontecimiento:
+- A todos los porteros que no vistieron camiseta negra les marcó un gol algún delantero europeo.
+- Algún portero jugó con botas blancas y solo le marcaron gole jugadores con botas blancas.
+- Ningún portero se marcó un gol así mismo.
+- Ningún jugador con botas blancas vistió camiseta negra.
+- Por tanto, algún delantero europero jugó con botas blancas.
+5- Socrates era el maestro de Platón. Socrates tuvo a lo sumo un discípulo. Aristoteles fue discípulo de alguien cuyo maestro fue Socrates
+Por consiguiente, Platón fue el maestro de Aristoteles.

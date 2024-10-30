@@ -98,3 +98,22 @@
                                  (veneno (enano asesino veneno))
                                  (sombra (enano asesino sombra))
                                  (golpe_letal (enano asesino golpe_letal))))))))
+
+(defun recorre (lista) 
+    (when lista 
+        (let ((elemento (car lista)))
+            (format t "¿Tu personaje es -a?-%" (car elemento)) 
+         ;   (format t "Atributos: -a-%" (cadr elemento)) 
+         (recorre (cdr lista))
+        )
+    )
+)
+
+
+(defun recorre (lista) 
+    (format t "¿Tu personaje es ~a ?" (car lista) )
+    (print (car lista)) 
+    (if lista 
+        (recorre (cdr lista))
+    )
+)
