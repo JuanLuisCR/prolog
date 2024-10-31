@@ -85,10 +85,12 @@ Table of Contents
 
 16. Si un usuario devuelve un libro en mal estado, se le asigna una
     multa.
+    mal_estado(devuelto(x)) -> multa(usuario)
+    x:libro
     
-
 17. Los autores que tienen libros en más de dos bibliotecas son
     considerados internacionales.
+    tiene(autor,libro)
 
 18. Si todos los usuarios de una sección han tomado el mismo libro en
     préstamo, ese libro es recomendado.
