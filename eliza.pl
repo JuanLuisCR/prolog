@@ -59,6 +59,17 @@ template([i, s(_),  _], [i, can, recommend, you, a, book, about, that, issue], [
 template([please, s(_), _], ['No', i, can, not, help, ',', i, am, just, a, machine], []). 
 		 template([tell, me, a, s(_), _], ['No', i, can, not, ',', i, am, bad, at, that], []).
 
+% Templates añadidos por mi sin variable anonima
+template([conoces,el,pais,mexico,'?'],[si,aunque,quiero,conocer,mas],[]).
+template([conoces, de , mexico,'?'],[si, un, poco], []).
+template([conoces, mexico,'?'],[si,lo,conozco],[]).
+template([te, gustaria, conocer, mexico, '?'],[ya,lo,conozco],[]).
+
+template([que,opinas,de,morelia],[una,ciudad,bonita],[]).
+
+% Templates añadidos por mi con variable anonima
+template([haz, visitado , el, pais , s(_),'?'],[no, conozco, ese, pais],[]).
+
 				  
 template(_, ['Please', explain, a, little, more, '.'], []). 
 % Lo que le gusta a eliza : flagLike
