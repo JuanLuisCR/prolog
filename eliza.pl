@@ -44,6 +44,20 @@ template([yo, soy, s(_),'.'], [porque, eres, tu, 0, '?'], [2]).
 template([te, gustan, las, s(_), _], [flagLike], [3]).
 template([te, gustan, los, s(_), _], [flagLike], [3]).
 
+% preguntar donde vive eliza
+template([vives, en, s(_), _], [flagLive], [2]).
+template([vives, en, s(_), ?], [flagLive], [2]).
+template([tu,vives,en,s(_),?], [flagLive], [3]).
+
+% pregunta que come eliza
+template([te,gusta,comer,s(_),?], [flagEat], [3]).
+template([tu,comes,s(_)], [flagEat], [2]).
+template([tu,comes,s(_),_], [flagEat], [2]).
+
+% pregunta que tipo de musica escucha
+template([te,gusta,escuchar,s(_),_], [flagListen], [3]).
+template([te,gusta,el,genero,s(_),_], [flagListen], [4]).
+
 		 % pregunta algo que hace eliza
 template([tu, eres, s(_), _], [flagDo], [2]).
 % pregunta algo que es eliza
@@ -82,7 +96,28 @@ likes(manzanas).
 likes(computadoras).
 like(carros).
 
+% Donde vive eliza: flagLive
+elizaLive(X, R):- live(X), R = ['Si', vivo, en, X].
+elizaLive(X, R):- \+live(X), R = ['No', no, vivo, en, X].
+live(mexico).
+live(morelia).
+live(michoacan).
+live(itm).
 
+% lo que le gusta comer a Eliza: flagEat
+elizaEat(X, R):- eat(X), R = ['Si', me, gusta, comer, X].
+elizaEat(X, R):- \+eat(X), R = ['No', no, me, gusta, comer, X].
+eat(hamburguesa).
+eat(pizza).
+eat(sandwich).
+eat(tacos).
+
+% lo que le gusta escuchar a Eliza: flagListen
+elizaListen(X, R):- listen(X), R = ['Si', me, gusta, escuchar, X].
+elizaListen(X, R):- \+listen(X), R = ['No', no, me, gusta, escuchar, X].
+listen(rock).
+listen(pop).
+listen(hiphop).
 
 % lo que hace eliza: flagDo
 elizaDoes(X, R):- does(X), R = ['Yes', i, X, and, i, love, it].
@@ -122,6 +157,27 @@ replace0([I|_], Input, _, Resp, R):-
 	nth0(0, Resp, X),
 	X == flagLike,
 	elizaLikes(Atom, R).
+
+% Eliza live:
+replace0([I|_], Input, _, Resp, R):-
+	nth0(I, Input, Atom),
+	nth0(0, Resp, X),
+	X == flagLive,
+	elizaLive(Atom, R).
+
+% Eliza eat:
+replace0([I|_], Input, _, Resp, R):-
+	nth0(I, Input, Atom),
+	nth0(0, Resp, X),
+	X == flagEat,
+	elizaEat(Atom, R).	
+
+% Eliza listen:
+replace0([I|_], Input, _, Resp, R):-
+	nth0(I, Input, Atom),
+	nth0(0, Resp, X),
+	X == flagListen,
+	elizaListen(Atom, R).	
 
 % Eliza does:
 replace0([I|_], Input, _, Resp, R):-
