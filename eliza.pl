@@ -43,6 +43,7 @@ template([yo, soy, s(_),'.'], [porque, eres, tu, 0, '?'], [2]).
 % pregunta algo que le gusta a eliza
 template([te, gustan, las, s(_), _], [flagLike], [3]).
 template([te, gustan, los, s(_), _], [flagLike], [3]).
+template([que,te,gusta],[flaglike]).
 
 % preguntar donde vive eliza
 template([vives, en, s(_), _], [flagLive], [2]).
@@ -87,14 +88,14 @@ template([haz, visitado , el, pais , s(_),'?'],[no, conozco, ese, pais],[]).
 				  
 template(_, ['Please', explain, a, little, more, '.'], []). 
 % Lo que le gusta a eliza : flagLike
-elizaLikes(X, R):- likes(X), R = ['Yeah', i, like, X].
+elizaLikes(X, R):- findall(["Me gusta", X ],likes(X),Results), flatten(Results, R).
 elizaLikes(X, R):- \+likes(X), R = ['Nope', i, do, not, like, X].
 likes(apples).
 likes(ponies).
 likes(zombies).
 likes(manzanas).
 likes(computadoras).
-like(carros).
+likes(carros).
 
 % Donde vive eliza: flagLive
 elizaLive(X, R):- live(X), R = ['Si', vivo, en, X].

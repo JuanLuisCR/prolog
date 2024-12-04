@@ -27,7 +27,7 @@ template(_, ['Por favor, explica un poco más.'], []).
 % Base de datos
 padre(juan, luis).
 padre(juan, antonio).
-padre(luis, carlos).
+padre(luis, carlos). 
 
 familia(X, R) :-
     findall(["El hijo de ", X, " es ", Y], padre(X, Y), Results),
