@@ -7,18 +7,13 @@
 % Ejemplo de uso de subconjunto/2
 % subset([1, 2, 3], Subconjunto).
 
-% Check if a number is prime.
-is_prime(Num) :-
-    Num > 1,
-    \+ has_divisor(Num, 2).
+%Encontrar primos
+es_primo(N) :- N > 1, \+ (between(2, N1, N), N1 < N, N mod N1 =:= 0).
+findall(Primo, (between(1, 20, Primo), es_primo(Primo)), Primos).
 
-% Check if a number has a divisor starting from Div.
-has_divisor(Num, Div) :-
-    Div * Div =< Num,    % Only check divisors up to the square root of Num.
-    Num mod Div =:= 0 ;  % Num is divisible by Div.
-    NextDiv is Div + 1,  % Try the next possible divisor.
-    has_divisor(Num, NextDiv).
+%Concatenar dos listas
+append([1, 2], [3, 4], Result).
 
-% Find all prime numbers between 1 and 20 using findall/3.
-find_primes(Primes) :-
-    findall(Prime, (between(1, 20, Prime), is_prime(Prime)), Primes).
+%
+findall(X, member(X, [1, 2, 2, 3, 3, 3, 4]), Soluciones).
+
