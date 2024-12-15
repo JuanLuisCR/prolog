@@ -85,6 +85,7 @@ template([que,opinas,de,morelia],[una,ciudad,bonita],[]).
 % Templates añadidos por mi con variable anonima
 template([haz, visitado , el, pais , s(_),'?'],[no, conozco, ese, pais],[]).
 
+
 				  
 template(_, ['Please', explain, a, little, more, '.'], []). 
 % Lo que le gusta a eliza : flagLike
