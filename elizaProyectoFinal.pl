@@ -99,15 +99,55 @@ template([que, clases, tiene, la, raza, s(_)], [flagraceclasses], [5]).
 template([que, razas, tienen, la, clase, s(_)], [flagclassraces], [5]).
 template([que, razas, tienen, la, habilidad, s(_)], [flagabilityraces], [5]).
 
-
 template([cuales, son, los, personajes, que, pertenecen, a, la, raza, s(_), y, tienen, la, clase, s(_)], [flagraceclass], [9, 14]).
+
+% Template médicos
+template([cual, es, la, especialidad, de, s(_)], [especialidad], [5]).
+template([donde, trabaja, s(_)], [hospital], [2]).
+template([que, equipo, utiliza, s(_)], [equipo], [3]).
+template([cual, es, el, interes, de, s(_)], [interes], [5]).
 
 % Templates de familia
 template([quien, es, el, padre, de, s(_)], [flagfather], [5]).
 template([quien, es, la, madre, de, s(_)], [flagmother], [5]).
 template([quienes, son, los, hermanos, de, s(_)], [flagsiblings], [5]).
-template([quienes, son, los, primos, de, s(_)], [flagcousins], [5]).
+template([quienes, son, los, primos, de, s(_)], [flagcousins], [5]).    
 template(_, ['No entiendo tu consulta. Por favor, intenta nuevamente.'], []).
+
+
+
+
+% Hechos
+doctor(ana).
+doctor(bruno).
+doctor(carla).
+doctor(diego).
+doctor(elena).
+
+especialidad(cardiologia).
+especialidad(neurologia).
+especialidad(oncologia).
+especialidad(pediatria).
+especialidad(dermatologia).
+
+hospital(general).
+hospital(regional).
+hospital(universitario).
+hospital(privado).
+hospital(militar).
+
+equipo(ecografo).
+equipo(resonancia).
+equipo(tomografo).
+equipo(dermatoscopio).
+equipo(electrocardiografo).
+
+interes(genetica).
+interes(farmacologia).
+interes(inmunologia).
+interes(bioetica).
+interes(microbiologia).
+
 
 % Hechos para árbol de lisp
 % Definición de razas
@@ -259,23 +299,36 @@ madre(graciela, gerardo).
 esposos(gabrielabuelo, graciela).
 esposos(juangabriel,ivonne).
 
+
 % Reglas
-hermanos(X, Y) :- (padre(Z, X), padre(Z, Y); madre(W, X), madre(W, Y)), X \= Y.
-primos(X, Y) :- padres(A, X), padres(B, Y), hermanos(A, B).
-padres(X, Y) :- padre(X, Y); madre(X, Y).
+resolver(Resultado) :-
+    Resultado = [
+        [ana, EspecialidadAna, HospitalAna, EquipoAna, InteresAna],
+        [bruno, EspecialidadBruno, HospitalBruno, EquipoBruno, InteresBruno],
+        [carla, EspecialidadCarla, HospitalCarla, EquipoCarla, InteresCarla],
+        [diego, EspecialidadDiego, HospitalDiego, EquipoDiego, InteresDiego],
+        [elena, EspecialidadElena, HospitalElena, EquipoElena, InteresElena]
+    ],
 
-% Respuestas específicas
-respuesta(flagclassskills, [Clase, Raza], Habilidades) :- findall(H, personaje(Raza, Clase, H), Habilidades).
-respuesta(flagraceclasses, [Raza], Clases) :- findall(C, personaje(Raza, C, _), Clases).
-respuesta(flagclassraces, [Clase], Razas) :- findall(R, personaje(R, Clase, _), Razas).
-respuesta(flagabilityraces, [Habilidad], Razas) :- findall(R, personaje(R, _, Habilidad), Razas).
-respuesta(flagraceclass, [Raza, Clase], Personajes) :- findall(H, personaje(Raza, Clase, H), Personajes).
+    especialidad(EspecialidadAna), especialidad(EspecialidadBruno), especialidad(EspecialidadCarla), especialidad(EspecialidadDiego), especialidad(EspecialidadElena),
+    all_different([EspecialidadAna, EspecialidadBruno, EspecialidadCarla, EspecialidadDiego, EspecialidadElena]),
 
-% Respuestas específicas
-respuesta(flagfather, [S], R) :- padre(R, S).
-respuesta(flagmother, [S], R) :- madre(R, S).
-respuesta(flagsiblings, [S], R) :- findall(X, hermanos(S, X), R).
-respuesta(flagcousins, [S], R) :- findall(X, primos(S, X), R).
+    hospital(HospitalAna), hospital(HospitalBruno), hospital(HospitalCarla), hospital(HospitalDiego), hospital(HospitalElena),
+    all_different([HospitalAna, HospitalBruno, HospitalCarla, HospitalDiego, HospitalElena]),
+
+    equipo(EquipoAna), equipo(EquipoBruno), equipo(EquipoCarla), equipo(EquipoDiego), equipo(EquipoElena),
+    all_different([EquipoAna, EquipoBruno, EquipoCarla, EquipoDiego, EquipoElena]),
+
+    interes(InteresAna), interes(InteresBruno), interes(InteresCarla), interes(InteresDiego), interes(InteresElena),
+    all_different([InteresAna, InteresBruno, InteresCarla, InteresDiego, InteresElena]),
+
+    % Restricciones dadas en el problema...
+    % Reglas específicas aquí según se explican en tu descripción
+
+    % Predicado para asegurar valores únicos en una lista
+    all_different([]).
+    all_different([H|T]) :- \+ member(H, T), all_different(T).
+
 
 
 template(_, ['Please', explain, a, little, more, '.'], []). 
@@ -497,8 +550,28 @@ replace0([I1, I2|_], Input, _, [flagraceclass|_], R) :-
     ; 
         format(atom(R), 'No se encontraron personajes para la raza ~w y clase ~w.', [Raza, Clase])
     ), !.
-  
 
+
+% Manejo de consultas específicas (flags)
+replace0([cual, es, la, especialidad, de, s(Doctor)], Resultado, R) :-
+    resolver(Resultado),
+    member([Doctor, Especialidad, _, _, _], Resultado),
+    format(atom(R), 'La especialidad de ~w es ~w.', [Doctor, Especialidad]).
+
+replace0([donde, trabaja, s(Doctor)], Resultado, R) :-
+    resolver(Resultado),
+    member([Doctor, _, Hospital, _, _], Resultado),
+    format(atom(R), 'El hospital donde trabaja ~w es ~w.', [Doctor, Hospital]).
+
+replace0([que, equipo, utiliza, s(Doctor)], Resultado, R) :-
+    resolver(Resultado),
+    member([Doctor, _, _, Equipo, _], Resultado),
+    format(atom(R), 'El equipo que utiliza ~w es ~w.', [Doctor, Equipo]).
+
+replace0([cual, es, el, interes, de, s(Doctor)], Resultado, R) :-
+    resolver(Resultado),
+    member([Doctor, _, _, _, Interes]), 
+    format(atom(R), 'El interés de ~w es ~w.', [Doctor, Interes]).
 
 replace0([I|_], Input, _, Resp, R) :-
     nth0(I, Input, Atom),
