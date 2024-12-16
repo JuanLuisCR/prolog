@@ -1,3 +1,5 @@
+:- discontiguous replace0/5.
+
 eliza:-	writeln('Hola , mi nombre es  Eliza tu  chatbot,
 	por favor ingresa tu consulta,
 	usar solo minúsculas sin . al final:'),
@@ -39,10 +41,6 @@ process_input(Input) :-
     readln(NewInput),
     process_input(NewInput).
 
-% Declaraciones discontiguous
-:- discontiguous template/3.
-:- discontiguous replace0/5.
-
 template([hola, mi, nombre, es, s(_), '.'], ['Hola', 0, 'Como', estas, tu, '?'], [4]).
 template([buendia, mi, nombre, es, s(_), '.'], ['buen dia', 'Como', estas, tu, 0, '?'], [4]).
 
@@ -68,8 +66,7 @@ template([que, eres, tu, s(_)], [flagIs], [2]).
 template([eres, s(_), '?'], [flagIs], [2]).
 
 	% pregunta sobre sobre datos de eliza
-template([eres, de, s(_), _], [flagWhere], [2]).
-% template([donde, vives,_], [flagWhere], [2]).
+template([donde, vives, s(_), _], [flagWhere], [2]).
 
 template([te, gusta, ver, peliculas, de, s(_)], [flagWatch], [5]).
 template([alguna, vez, has, ido, a, s(_)], [flagVisit], [5]).
@@ -84,7 +81,6 @@ template([como, te, llamas,  _], [mucho, gusto, mi, nombre, es, eliza], []).
 template([cual , es, tu, edad,  _], [no, tengo, una, edad, existo, desde, siempre], []).
 
 template([eres , un, ser, humano,  _], [no, fisicamente, pero, lo, intento], []).
-% terminan nuevas reglas
 
 template([yo, pienso, que, _], [bueno, esa, es, tu, opinion], []).
 template([porque, _], [esa, no, es, una, buena, razon, '.'], []).
@@ -92,6 +88,12 @@ template([i, have, s(), with, s(), '.'], ['You', have, to, deal, with, your, 0, 
 template([i, s(_),  _], [i, can, recommend, you, a, book, about, that, issue], []).
 template([please, s(_), _], ['No', i, can, not, help, ',', i, am, just, a, machine], []). 
 		 template([tell, me, a, s(_), _], ['No', i, can, not, ',', i, am, bad, at, that], []).
+
+% Template medicos
+template([que, especialidad, tiene, s(_)], [flagEspecialidad], [3]).
+template([en, hospital, trabaja, s(_)], [flagHospital], [3]).
+template([que, equipo, utiliza, s(_)], [flagEquipo], [3]).
+template([que, interes, de, investigacion, tiene, s(_)], [flagInteres], [5]).
 
 % Templates para consultas
 template([que, habilidades, tiene, la, clase, s(_), de, la, raza, s(_)], [flagclassskills], [5, 9]).
@@ -101,18 +103,15 @@ template([que, razas, tienen, la, habilidad, s(_)], [flagabilityraces], [5]).
 
 template([cuales, son, los, personajes, que, pertenecen, a, la, raza, s(_), y, tienen, la, clase, s(_)], [flagraceclass], [9, 14]).
 
-% Template médicos
-template([cual, es, la, especialidad, de, s(_)], [especialidad], [5]).
-template([donde, trabaja, s(_)], [hospital], [2]).
-template([que, equipo, utiliza, s(_)], [equipo], [3]).
-template([cual, es, el, interes, de, s(_)], [interes], [5]).
 
 % Templates de familia
 template([quien, es, el, padre, de, s(_)], [flagfather], [5]).
 template([quien, es, la, madre, de, s(_)], [flagmother], [5]).
 template([quienes, son, los, hermanos, de, s(_)], [flagsiblings], [5]).
-template([quienes, son, los, primos, de, s(_)], [flagcousins], [5]).    
-template(_, ['No entiendo tu consulta. Por favor, intenta nuevamente.'], []).
+template([quienes, son, los, primos, de, s(_)], [flagcousins], [5]).
+
+% Template general
+template(_, ['Por favor, explica un poco mas.'], []).
 
 
 
@@ -300,8 +299,10 @@ esposos(gabrielabuelo, graciela).
 esposos(juangabriel,ivonne).
 
 
-% Reglas
+% Solución del problema
 resolver(Resultado) :-
+    % Creamos una lista de médicos con sus atributos
+    write('Cargando resultados...'),nl,
     Resultado = [
         [ana, EspecialidadAna, HospitalAna, EquipoAna, InteresAna],
         [bruno, EspecialidadBruno, HospitalBruno, EquipoBruno, InteresBruno],
@@ -309,7 +310,8 @@ resolver(Resultado) :-
         [diego, EspecialidadDiego, HospitalDiego, EquipoDiego, InteresDiego],
         [elena, EspecialidadElena, HospitalElena, EquipoElena, InteresElena]
     ],
-
+    
+    % Valores únicos para cada atributo
     especialidad(EspecialidadAna), especialidad(EspecialidadBruno), especialidad(EspecialidadCarla), especialidad(EspecialidadDiego), especialidad(EspecialidadElena),
     all_different([EspecialidadAna, EspecialidadBruno, EspecialidadCarla, EspecialidadDiego, EspecialidadElena]),
 
@@ -322,16 +324,44 @@ resolver(Resultado) :-
     interes(InteresAna), interes(InteresBruno), interes(InteresCarla), interes(InteresDiego), interes(InteresElena),
     all_different([InteresAna, InteresBruno, InteresCarla, InteresDiego, InteresElena]),
 
-    % Restricciones dadas en el problema...
-    % Reglas específicas aquí según se explican en tu descripción
+    % Restricciones dadas por el enunciado:
+    % 1. Carla no trabaja en el Hospital General ni en el Privado, y no estudia neurología.
+    HospitalCarla \= general, HospitalCarla \= privado, EspecialidadCarla \= neurologia,
 
-    % Predicado para asegurar valores únicos en una lista
-    all_different([]).
-    all_different([H|T]) :- \+ member(H, T), all_different(T).
+    % 2. La persona que utiliza el electrocardiógrafo trabaja en cardiología en el Hospital Militar, pero no es Diego.
+    member([_, cardiologia, militar, electrocardiografo, _], Resultado),
+    not(member([diego, cardiologia, militar, electrocardiografo, _], Resultado)),
+
+    % 3. Bruno está interesado en farmacología, pero no trabaja en el Hospital Regional ni en el Militar.
+    InteresBruno = farmacologia, HospitalBruno \= regional, HospitalBruno \= militar,
+
+    % 4. La persona que utiliza el ecógrafo trabaja en pediatría y no es del Hospital Universitario ni del Militar.
+    member([_, pediatria, HospitalPediatria, ecografo, _], Resultado), HospitalPediatria \= universitario, HospitalPediatria \= militar,
+
+    % 5. El especialista en oncología trabaja en el Hospital General y utiliza un tomógrafo.
+    member([_, oncologia, general, tomografo, _], Resultado),
+
+    % 6. El médico interesado en inmunología usa el resonador magnético, pero no es Elena.
+    member([_, _, _, resonancia, inmunologia], Resultado), not(member([elena, _, _, resonancia, inmunologia], Resultado)),
+
+    % 7. El médico del Hospital Regional se dedica a dermatología.
+    member([_, dermatologia, regional, _, _], Resultado),
+
+    % 8. Elena está interesada en bioética y no utiliza el electrocardiógrafo.
+    InteresElena = bioetica, EquipoElena \= electrocardiografo,
+
+    % 9. Diego es el experto en microbiología.
+    InteresDiego = microbiologia,
+
+    % 10. El médico del Hospital Universitario utiliza un dermatoscopio.
+    member([_, _, universitario, dermatoscopio, _], Resultado).
+
+% Predicado para asegurar valores únicos en una lista
+all_different([]).
+all_different([H|T]) :- not(member(H, T)), all_different(T).
 
 
 
-template(_, ['Please', explain, a, little, more, '.'], []). 
 % Lo que le gusta a eliza : flagLike
 elizaLikes(X, R):- likes(X), R = ['Yeah', i, like, X].
 elizaLikes(X, R):- \+likes(X), R = ['Nope', i, do, not, like, X].
@@ -552,26 +582,49 @@ replace0([I1, I2|_], Input, _, [flagraceclass|_], R) :-
     ), !.
 
 
-% Manejo de consultas específicas (flags)
-replace0([cual, es, la, especialidad, de, s(Doctor)], Resultado, R) :-
-    resolver(Resultado),
-    member([Doctor, Especialidad, _, _, _], Resultado),
-    format(atom(R), 'La especialidad de ~w es ~w.', [Doctor, Especialidad]).
 
-replace0([donde, trabaja, s(Doctor)], Resultado, R) :-
-    resolver(Resultado),
-    member([Doctor, _, Hospital, _, _], Resultado),
-    format(atom(R), 'El hospital donde trabaja ~w es ~w.', [Doctor, Hospital]).
 
-replace0([que, equipo, utiliza, s(Doctor)], Resultado, R) :-
-    resolver(Resultado),
-    member([Doctor, _, _, Equipo, _], Resultado),
-    format(atom(R), 'El equipo que utiliza ~w es ~w.', [Doctor, Equipo]).
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagEspecialidad,  
+    resolver(Resultado),             
+    (member([Nombre, Especialidad, _, _, _], Resultado) -> 
+        R = ['La especialidad de', Nombre, 'es', Especialidad]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).    
 
-replace0([cual, es, el, interes, de, s(Doctor)], Resultado, R) :-
-    resolver(Resultado),
-    member([Doctor, _, _, _, Interes]), 
-    format(atom(R), 'El interés de ~w es ~w.', [Doctor, Interes]).
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagHospital,  
+    resolver(Resultado),             
+    (member([Nombre, _,Hospital, _, _], Resultado) -> 
+        R = [Nombre,'trabaja en', Hospital]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).  
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagEquipo,  
+    resolver(Resultado),             
+    (member([Nombre,_,_, Equipo, _], Resultado) -> 
+        R = ['El equipo favorito de',Nombre,'es', Equipo]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).  
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagInteres,  
+    resolver(Resultado),             
+    (member([Nombre,_, _,_, Interes], Resultado) -> 
+        R = ['El interes de',Nombre,'es', Interes]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]). 
+
+
 
 replace0([I|_], Input, _, Resp, R) :-
     nth0(I, Input, Atom),
