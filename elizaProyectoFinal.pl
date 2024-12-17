@@ -2,7 +2,7 @@
 
 eliza:-	writeln('Hola , mi nombre es  Eliza tu  chatbot,
 	por favor ingresa tu consulta,
-	usar solo minúsculas sin . al final:'),
+	usar solo minusculas sin . al final:'),
 	readln(Input),
 	eliza(Input),!.
 eliza(Input):- Input == ['Adios'],
